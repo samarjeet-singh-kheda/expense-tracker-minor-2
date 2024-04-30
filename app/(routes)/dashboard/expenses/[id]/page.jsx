@@ -7,14 +7,15 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import BudgetItem from "../../_components/BudgetItem";
 import AddExpense from "../_components/AddExpense";
+import ExpenseListTable from "../_components/ExpenseListTable";
 
 function ExpensesScreen({ params }) {
   const { user } = useUser();
 
   const [budgetInfo, setBudgetInfo] = useState({});
+  const [expensesList, setExpensesList] = useState([]);
 
   useEffect(() => {
-    console.log(params.id);
     user && getBudgetInfo();
   }, [user]);
 
@@ -33,6 +34,20 @@ function ExpensesScreen({ params }) {
 
     // console.log(result);
     setBudgetInfo(result[0]);
+
+    getExpensesList();
+  };
+
+  const getExpensesList = async () => {
+    const result = await db
+      .select()
+      .from(Expenses)
+      .where(eq(Expenses.budgetId, params.id))
+      .orderBy(desc(Expenses.id));
+
+    setExpensesList(result);
+
+    console.log(result);
   };
 
   return (
@@ -50,6 +65,13 @@ function ExpensesScreen({ params }) {
           budgetId={params.id}
           refreshData={() => getBudgetInfo()}
           user={user}
+        />
+      </div>
+      <div className="mt-4">
+        <h2 className=" font-bold text-lg">Latest Expenses</h2>
+        <ExpenseListTable
+          expensesList={expensesList}
+          refreshData={() => getBudgetInfo()}
         />
       </div>
     </div>
