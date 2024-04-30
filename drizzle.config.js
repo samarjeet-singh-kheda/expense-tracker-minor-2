@@ -1,3 +1,4 @@
+/** @type { import("drizzle-kit").Config } */
 export default {
   schema: "./utils/schema.jsx",
   driver: "pg",

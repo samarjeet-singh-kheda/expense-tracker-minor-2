@@ -19,7 +19,7 @@ import { Budgets } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 
-function CreateBudget() {
+function CreateBudget({ refreshData }) {
   const [emojiIcon, setEmojiIcon] = useState("😀");
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
@@ -40,7 +40,8 @@ function CreateBudget() {
       .returning({ insertedId: Budgets.id });
 
     if (result) {
-      console.log(result);
+      refreshData();
+
       toast("New Budget Created!");
     }
   };
@@ -66,7 +67,7 @@ function CreateBudget() {
                 >
                   {emojiIcon}
                 </Button>
-                <div className=" absolute">
+                <div className=" absolute z-20">
                   <EmojiPicker
                     height={400}
                     open={openEmojiPicker}
