@@ -8,12 +8,28 @@ import { useUser } from "@clerk/nextjs";
 import BudgetItem from "../../_components/BudgetItem";
 import AddExpense from "../_components/AddExpense";
 import ExpenseListTable from "../_components/ExpenseListTable";
+import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function ExpensesScreen({ params }) {
   const { user } = useUser();
 
   const [budgetInfo, setBudgetInfo] = useState({});
   const [expensesList, setExpensesList] = useState([]);
+  const route = useRouter();
 
   useEffect(() => {
     user && getBudgetInfo();
@@ -32,7 +48,6 @@ function ExpensesScreen({ params }) {
       .where(eq(Budgets.id, params.id))
       .groupBy(Budgets.id);
 
-    // console.log(result);
     setBudgetInfo(result[0]);
 
     getExpensesList();
@@ -46,13 +61,53 @@ function ExpensesScreen({ params }) {
       .orderBy(desc(Expenses.id));
 
     setExpensesList(result);
+  };
 
-    console.log(result);
+  const deleteBudget = async () => {
+    const deleteExpensesResult = await db
+      .delete(Expenses)
+      .where(eq(Expenses.budgetId, params.id))
+      .returning();
+
+    if (deleteExpensesResult) {
+      const result = await db
+        .delete(Budgets)
+        .where(eq(Budgets.id, params.id))
+        .returning();
+    }
+
+    toast("Budget Deleted!");
+
+    route.replace("/dashboard/budgets");
   };
 
   return (
     <div className="p-10 flex justify-center  flex-col">
-      <h2 className="text-3xl font-bold ">Expenses id page placeholder</h2>
+      <h2 className="text-3xl font-bold  flex justify-between items-center">
+        My Expenses
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button className=" flex gap-2" variant="destructive">
+              <Trash /> Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                current budget along with expenses.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => deleteBudget()}>
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </h2>
 
       <div className=" grid grid-cols-1 md:grid-cols-2 mt-6 gap-5">
         {budgetInfo ? (
