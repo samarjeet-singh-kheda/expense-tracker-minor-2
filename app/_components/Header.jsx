@@ -14,7 +14,13 @@ function Header() {
       <Image src={"./logo.svg"} alt="logo" width={160} height={100} />
 
       {isSignedIn ? (
-        <UserButton />
+        <div className=" flex items-center gap-4">
+          <Link href="/dashboard">
+            {" "}
+            <Button>Dashboard</Button>
+          </Link>
+          <UserButton />
+        </div>
       ) : (
         <Link href="/sign-in">
           <Button>Get started!</Button>
