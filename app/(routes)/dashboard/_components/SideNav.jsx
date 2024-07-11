@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import { LayoutGrid, PiggyBank, ReceiptText, ShieldCheck } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -35,6 +35,10 @@ function SideNav() {
     },
   ];
 
+  const { user } = useUser();
+
+  console.log(user?.firstName.split(" ")[0]);
+
   const path = usePathname();
 
   // useEffect(() => {
@@ -61,7 +65,7 @@ function SideNav() {
 
       <div className="fixed bottom-10 p-5 flex gap-2 items-center">
         <UserButton />
-        Profile
+        {user ? user?.firstName.split(" ")[0] : "Profile"}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 function Hero() {
   return (
@@ -27,11 +28,14 @@ function Hero() {
         </div>
       </div>
 
-      {/* 
-      
-        //TODO  --> Add a dashboard image here, later
-
-      */}
+      <div className=" flex justify-center aliign-center">
+        <Image
+          src={"/dashboard.png"}
+          height="1000"
+          width="1000"
+          className="block mb-16"
+        />
+      </div>
     </section>
   );
 }

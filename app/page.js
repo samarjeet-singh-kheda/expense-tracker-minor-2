@@ -7,6 +7,10 @@ function Home() {
     <div>
       <Header />
       <Hero />
+
+      <footer className="bg-primary text-white p-4 text-center">
+        © 2024 Samarjeet Singh. All rights reserved.
+      </footer>
     </div>
   );
 }
